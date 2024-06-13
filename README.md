@@ -43,6 +43,28 @@
 ## C. 伺服器部屬
 請使⽤AWS免費⽅案或GCP前三個⽉免費300美元額度啟動⼀台虛擬機，將Django專
 案搭配Apache 2網⾴伺服器進⾏部屬:
+    我使用GCP，以下是我的設定:
+![螢幕擷取畫面 2024-06-13 212504](https://github.com/DokuroTW/roar/assets/100449940/43b14340-d224-4016-94cf-cfc8f4bbe35a)
+
+![螢幕擷取畫面 2024-06-13 212615](https://github.com/DokuroTW/roar/assets/100449940/6c54b67c-a8af-4d3f-a92d-65b349d21ac3)
+
+![螢幕擷取畫面 2024-06-13 212649](https://github.com/DokuroTW/roar/assets/100449940/291c7883-7ff4-497e-86e1-b5c7115040ec)
+
+    遠端SSH我使用Xshell與Xftp:
+![螢幕擷取畫面 2024-06-13 213600](https://github.com/DokuroTW/roar/assets/100449940/a4e0a90e-d56d-4a8e-b349-ef30277758bc)
+
+![螢幕擷取畫面 2024-06-13 213152](https://github.com/DokuroTW/roar/assets/100449940/c67a97af-ceb1-4feb-9636-25a03c5fca3e)
+
+![螢幕擷取畫面 2024-06-13 213600](https://github.com/DokuroTW/roar/assets/100449940/cf504586-766c-4a37-908b-b7639e10216d)
+
+![螢幕擷取畫面 2024-06-13 213510](https://github.com/DokuroTW/roar/assets/100449940/5bbe6ccd-1c68-4c5c-a236-cda6ced2576d)
+
+
+
 
 ## D. 網域設定
 1. 請了解如何在Cloudflare中代管網域，將做為⼆⾯中⼝試題⽬之⼀。
+    過去在公司使用的是中華電信的DNS服務，來對ip轉成domain的。
+![螢幕擷取畫面 2024-06-13 150106](https://github.com/DokuroTW/roar/assets/100449940/22b4b6d1-94ff-4044-8979-4a10ee009f06)
+
+
