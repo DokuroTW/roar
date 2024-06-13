@@ -55,7 +55,7 @@
 
 ![螢幕擷取畫面 2024-06-13 213152](https://github.com/DokuroTW/roar/assets/100449940/c67a97af-ceb1-4feb-9636-25a03c5fca3e)
 
-![螢幕擷取畫面 2024-06-13 213600](https://github.com/DokuroTW/roar/assets/100449940/cf504586-766c-4a37-908b-b7639e10216d)
+![螢幕擷取畫面 2024-06-13 213446](https://github.com/DokuroTW/roar/assets/100449940/acc09662-57ec-489a-b96d-2baa9e5bf153)
 
 ![螢幕擷取畫面 2024-06-13 213510](https://github.com/DokuroTW/roar/assets/100449940/5bbe6ccd-1c68-4c5c-a236-cda6ced2576d)
 
