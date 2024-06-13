@@ -64,7 +64,9 @@
 
 ## D. 網域設定
 1. 請了解如何在Cloudflare中代管網域，將做為⼆⾯中⼝試題⽬之⼀。
+
     過去在公司使用的是中華電信的DNS服務，來對ip轉成domain的。
+
 ![螢幕擷取畫面 2024-06-13 150106](https://github.com/DokuroTW/roar/assets/100449940/22b4b6d1-94ff-4044-8979-4a10ee009f06)
 
 
