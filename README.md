@@ -99,8 +99,99 @@ password : test123
 ## D. 網域設定
 ### 1. 請了解如何在Cloudflare中代管網域，將做為⼆⾯中⼝試題⽬之⼀。
 
-    過去在公司使用的是中華電信的DNS服務，來對ip轉成domain的。
+過去在公司使用的是中華電信的DNS服務，來對ip轉成domain的。
 
 ![螢幕擷取畫面 2024-06-13 150106](https://github.com/DokuroTW/roar/assets/100449940/22b4b6d1-94ff-4044-8979-4a10ee009f06)
 
+反向代理會使用nginx並上CA，使其變為SSL，以下是我的nginx.conf的設定檔:
+```
+server {
+    listen 80;
+    server_name 34.125.227.86;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://$host$request_uri;
+
+    server_tokens off;
+
+    # Add HSTS header
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header X-Frame-Options "DENY" always; 
+    add_header Cache-Control "no-cache, no-store, must-revalidate";
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Referrer-Policy "same-origin";
+
+    access_log  /var/log/nginx/euptop-access.log;
+    error_log   /var/log/nginx/euptop-error.log;
+
+    location / {
+        proxy_pass http://127.0.0.1:8069;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $host;
+	proxy_cookie_path / "/; secure; HttpOnly; SameSite=Strict";
+	proxy_hide_header X-Frame-Options;
+	proxy_hide_header X-Runtime;
+	proxy_hide_header X-powered-by;
+	autoindex off;
+        proxy_redirect off;
+    }
+}
+
+# HTTPS server block
+server {
+    listen 443 ssl http2;
+    server_name 34.125.227.86;
+
+    server_tokens off;
+
+    ssl_certificate /etc/letsencrypt/live/euptop.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/euptop.com/privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_timeout 10m;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_tickets off;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header X-Frame-Options "DENY" always; 
+    add_header Cache-Control "no-cache, no-store, must-revalidate";
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Referrer-Policy "same-origin";
+
+    access_log  /var/log/nginx/euptop-ssl-access.log;
+    error_log   /var/log/nginx/euptop-ssl-error.log;
+
+    location / {
+        proxy_pass http://127.0.0.1:8069;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $host;
+	proxy_cookie_path / "/; secure; HttpOnly; SameSite=Strict";
+	proxy_hide_header X-Frame-Options;
+	proxy_hide_header X-Runtime;
+	proxy_hide_header X-powered-by;
+	autoindex off;
+        proxy_redirect off;
+    }
+}
+```
+
+但目前了解下來，cloudflare可以做到更多，包含domain轉至給其代管、代管後享有DDOS基本防護(透過加入hash在封包中)，跟過去我所接觸的incapsula解決方式不同(透過引導流量)，也支援雲端WAF或是CDN，總之只要是與proxy相關的，皆可以在他們代管下實現，同時SSL也是免費使用(目前瞭解下來並不用定時更換)。
+
+並起可以透過UI進行操作:
+
+![螢幕擷取畫面 2024-06-17 213432](https://github.com/DokuroTW/roar/assets/100449940/5cdb2ab7-cdc8-4888-a5cd-76f78e78af6e)
 
