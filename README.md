@@ -46,21 +46,54 @@
     我使用GCP，以下是我的設定:
 ![螢幕擷取畫面 2024-06-13 212504](https://github.com/DokuroTW/roar/assets/100449940/43b14340-d224-4016-94cf-cfc8f4bbe35a)
 
+Computer Engine > VM執行個體 > 建立執行個體 選擇使用ubuntu20.04 與設定防火牆 http、https
+
 ![螢幕擷取畫面 2024-06-13 212615](https://github.com/DokuroTW/roar/assets/100449940/6c54b67c-a8af-4d3f-a92d-65b349d21ac3)
 
+虛擬私有雲網路 > 防火牆政策 > 建立防火牆政策 > 設定 tcp:8000 與 udp:8000
+
 ![螢幕擷取畫面 2024-06-13 212649](https://github.com/DokuroTW/roar/assets/100449940/291c7883-7ff4-497e-86e1-b5c7115040ec)
+
+Computer Engine > VM執行個體 > 選擇新建的執行個體 > 選擇新建立的防火牆政策 並確認 http與https通行
 
     遠端SSH我使用Xshell與Xftp:
 ![螢幕擷取畫面 2024-06-13 213600](https://github.com/DokuroTW/roar/assets/100449940/a4e0a90e-d56d-4a8e-b349-ef30277758bc)
 
+工具 > 使用者金鑰管理 > 產生 生成 publickey(RSA)
+
 ![螢幕擷取畫面 2024-06-13 213152](https://github.com/DokuroTW/roar/assets/100449940/c67a97af-ceb1-4feb-9636-25a03c5fca3e)
+
+Computer Engine > 中繼資料 >安全殼層金鑰 > 將公鑰值填入
+
+```
+accound : djangotest
+password : test123
+```
+
+設定完成後 Xshell 與 xftp 皆可 SSH
 
 ![螢幕擷取畫面 2024-06-13 213446](https://github.com/DokuroTW/roar/assets/100449940/acc09662-57ec-489a-b96d-2baa9e5bf153)
 
 ![螢幕擷取畫面 2024-06-13 213510](https://github.com/DokuroTW/roar/assets/100449940/5bbe6ccd-1c68-4c5c-a236-cda6ced2576d)
 
+設定 apache2 的 config 在 site-available中
 
+![螢幕擷取畫面 2024-06-17 212322](https://github.com/DokuroTW/roar/assets/100449940/713333b7-f029-4b61-8843-2d6bf07ba7a6)
 
+```
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName 34.125.227.86
+
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8000/
+    ProxyPassReverse / http://localhost:8000/
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+```
 
 ## D. 網域設定
 ### 1. 請了解如何在Cloudflare中代管網域，將做為⼆⾯中⼝試題⽬之⼀。
