@@ -168,7 +168,8 @@ MongoDB請參考官⽅操作⼿冊，安裝於本地端。
 ## C. 伺服器部屬
 請使⽤AWS免費⽅案或GCP前三個⽉免費300美元額度啟動⼀台虛擬機，將Django專
 案搭配Apache 2網⾴伺服器進⾏部屬:
-    我使用GCP，以下是我的設定:
+
+我使用GCP，以下是我的設定:
 ![螢幕擷取畫面 2024-06-13 212504](https://github.com/DokuroTW/roar/assets/100449940/43b14340-d224-4016-94cf-cfc8f4bbe35a)
 
 Computer Engine > VM執行個體 > 建立執行個體 選擇使用ubuntu20.04 與設定防火牆 http、https
