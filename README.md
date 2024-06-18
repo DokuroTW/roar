@@ -1,3 +1,5 @@
+## 除了B-c，ABCD其他問題都已經回答
+
 ## A. 資料庫
 
 ### 1. 請說明SQL與No-SQL的差異，並說明兩者的運⽤場景:
@@ -35,6 +37,100 @@
 
 ### 3. 請對以下資料進⾏正規化(⾄第三正規化)，請⾃⾏建⽴並將資料寫⼊SQLite3資料庫(檔案隨Django程式碼⼀同繳交)，資料庫將做為後續題⽬使⽤:
 
+腳本:InsertData.py 位置在 羅爾科技測題\專案原始碼\MPInformation\InsertData.py
+
+```
+import os
+import django
+import requests
+from datetime import datetime
+from django.utils import timezone
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "MPInformation.settings")
+django.setup()
+
+from MusicApp.models import Event, Category, Unit, EventUnit, ShowInfo
+
+def FetchData(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+
+
+def ParseDatetime(date_string):
+    if date_string:
+        dt = datetime.strptime(date_string, '%Y/%m/%d %H:%M:%S')
+        return timezone.make_aware(dt, timezone.get_current_timezone())
+    return None
+
+
+def InsertData(data):
+    for record in data:
+        category, _ = Category.objects.get_or_create(name=record['category'])
+
+        event, created = Event.objects.update_or_create(
+            uid=record['UID'],
+            defaults={
+                'version': record['version'],
+                'title': record['title'],
+                'category': category,
+                'show_unit': record.get('showUnit'),
+                'description': record.get('descriptionFilterHtml'),
+                'discount_info': record.get('discountInfo'),
+                'image_url': record.get('imageUrl'),
+                'web_sales': record.get('webSales'),
+                'source_web_promote': record.get('sourceWebPromote'),
+                'comment': record.get('comment'),
+                'edit_modify_date': ParseDatetime(record.get('editModifyDate')),
+                'source_web_name': record['sourceWebName'],
+                'start_date': timezone.make_aware(datetime.strptime(record['startDate'], '%Y/%m/%d'),
+                                                  timezone.get_current_timezone()),
+                'end_date': timezone.make_aware(datetime.strptime(record['endDate'], '%Y/%m/%d'),
+                                                timezone.get_current_timezone()),
+                'hit_rate': record['hitRate']
+            }
+        )
+
+        if not created:
+            EventUnit.objects.filter(event=event).delete()
+            ShowInfo.objects.filter(event=event).delete()
+
+        units = ['masterUnit', 'subUnit', 'supportUnit', 'otherUnit']
+        for unit_type in units:
+            for unit_name in record[unit_type]:
+                unit, _ = Unit.objects.get_or_create(name=unit_name)
+                EventUnit.objects.create(event=event, unit=unit, role=unit_type)
+
+        for show in record['showInfo']:
+            ShowInfo.objects.create(
+                event=event,
+                time=ParseDatetime(show['time']),
+                location=show['location'],
+                location_name=show['locationName'],
+                on_sales=show['onSales'] == 'Y',
+                latitude=float(show['latitude']) if show['latitude'] else None,
+                longitude=float(show['longitude']) if show['longitude'] else None,
+                price=show['price'],
+                end_time=ParseDatetime(show['endTime'])
+            )
+
+
+if __name__ == '__main__':
+    url = 'https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=1'
+    data = FetchData(url)
+    InsertData(data)
+
+```
+前置作業: 必須先將model.py的欄位給創建好，並同步到SQLite中
+```
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+我透過DB工具 `DBeaver` 來查看資料確認匯入
+
+![image](https://github.com/DokuroTW/roar/assets/100449940/0decf1db-bc97-4363-9a9d-851d2e31e57c)
+
+
 ## B. Django
 根據以上資料，透過Django框架進⾏開發(作業系統指定使⽤Ubuntu 20.04)，並提供
 說明⽂件及原始碼。
@@ -42,12 +138,31 @@
 ### a. 登⼊/登出：登⼊後始可進⾏其他操作。
 
 ### b. 操作⾴⾯：⾄少有三個按鈕，對應以下API(輸⼊、輸出規格⾃⾏決定)
-i. 資料刪除
-ii. 資料查詢
-iii. 資料修改
-僅透過 /operation/ 該端點，完成顯⽰操作⾴⾯、資料刪除、資料查詢及資料修改四項操作。其中資料查詢API，需具有以下特性：
-1. 允許已登⼊的使⽤者和未登⼊的使⽤者訪問。
-2. ⾝分驗證機制需確保未登⼊的使⽤者也能存取資源。其餘透過Django Authentication綁定登⼊狀態即可。
+### i. 資料刪除
+### ii. 資料查詢
+### iii. 資料修改
+### 僅透過 /operation/ 該端點，完成顯⽰操作⾴⾯、資料刪除、資料查詢及資料修改四項操作。其中資料查詢API，需具有以下特性：
+### 1. 允許已登⼊的使⽤者和未登⼊的使⽤者訪問。
+### 2. ⾝分驗證機制需確保未登⼊的使⽤者也能存取資源。其餘透過Django Authentication綁定登⼊狀態即可。
+
+#### 專案位置: 羅爾科技測題\專案原始碼\MPInformation
+
+這是我的頁面，只顯示Event中，標題與內容這兩個欄位，在登入前只能夠使用搜尋功能；登入後可以使用搜尋、編輯及刪除的功能。
+
+```
+測試帳號:djangotest
+測試密碼:test123
+```
+
+## 未登入畫面
+
+![image](https://github.com/DokuroTW/roar/assets/100449940/db17f618-8e23-4634-8ee0-a0fae67cfae7)
+
+## 登入畫面
+
+![image](https://github.com/DokuroTW/roar/assets/100449940/3401c36a-d6f4-43c3-b710-369cd7e9b836)
+
+
 
 ### c. ⾃動更新資料
 撰寫程式⾃動於每⽇01:00:00(UTC+8)從政府資料開放平臺抓取資料並與更新資料庫，爬取紀錄儲存於MongoDB中，紀錄內容不限，⽤以檢視是否了解如何透過Python操作MongoDB。
