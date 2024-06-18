@@ -37,7 +37,7 @@
 
 ### 3. 請對以下資料進⾏正規化(⾄第三正規化)，請⾃⾏建⽴並將資料寫⼊SQLite3資料庫(檔案隨Django程式碼⼀同繳交)，資料庫將做為後續題⽬使⽤:
 
-腳本:InsertData.py 位置在 羅爾科技測題\專案原始碼\MPInformation\InsertData.py
+腳本`InsertData.py` 位置在 羅爾科技測題\專案原始碼\MPInformation\InsertData.py
 
 ```
 import os
@@ -128,22 +128,14 @@ python3 manage.py migrate
 ```
 我透過DB工具 `DBeaver` 來查看資料確認匯入
 
-![image](https://github.com/DokuroTW/roar/assets/100449940/0decf1db-bc97-4363-9a9d-851d2e31e57c)
+![image](https://github.com/DokuroTW/roar/assets/100449940/d3cea7b8-3731-4d2f-b341-caaf57a1a728)
+
 
 
 ## B. Django
 根據以上資料，透過Django框架進⾏開發(作業系統指定使⽤Ubuntu 20.04)，並提供
 說明⽂件及原始碼。
 
-### a. 登⼊/登出：登⼊後始可進⾏其他操作。
-
-### b. 操作⾴⾯：⾄少有三個按鈕，對應以下API(輸⼊、輸出規格⾃⾏決定)
-### i. 資料刪除
-### ii. 資料查詢
-### iii. 資料修改
-### 僅透過 /operation/ 該端點，完成顯⽰操作⾴⾯、資料刪除、資料查詢及資料修改四項操作。其中資料查詢API，需具有以下特性：
-### 1. 允許已登⼊的使⽤者和未登⼊的使⽤者訪問。
-### 2. ⾝分驗證機制需確保未登⼊的使⽤者也能存取資源。其餘透過Django Authentication綁定登⼊狀態即可。
 
 #### 專案位置: 羅爾科技測題\專案原始碼\MPInformation
 
@@ -167,6 +159,11 @@ python3 manage.py migrate
 ### c. ⾃動更新資料
 撰寫程式⾃動於每⽇01:00:00(UTC+8)從政府資料開放平臺抓取資料並與更新資料庫，爬取紀錄儲存於MongoDB中，紀錄內容不限，⽤以檢視是否了解如何透過Python操作MongoDB。
 MongoDB請參考官⽅操作⼿冊，安裝於本地端。
+
+```
+本人不會使用MongoDB，會再花時間去學習
+```
+
 
 ## C. 伺服器部屬
 請使⽤AWS免費⽅案或GCP前三個⽉免費300美元額度啟動⼀台虛擬機，將Django專
@@ -195,8 +192,8 @@ Computer Engine > VM執行個體 > 選擇新建的執行個體 > 選擇新建立
 Computer Engine > 中繼資料 >安全殼層金鑰 > 將公鑰值填入
 
 ```
-accound : djangotest
-password : test123
+accound　:　djangotest
+password　:　test123
 ```
 
 設定完成後 Xshell 與 xftp 皆可 SSH
